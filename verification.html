@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification - MTN Circle Phones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            color: #333;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(90deg, #FFD600 0%, #FFC400 100%);
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #003DA5;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            font-size: 24px;
+        }
+
+        .tagline {
+            font-size: 14px;
+            color: #003DA5;
+            opacity: 0.8;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: linear-gradient(90deg, #003DA5 0%, #0052CC 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .form-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px;
+            background: #F5F5F5;
+        }
+
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .progress-step::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: #DDD;
+            z-index: -1;
+        }
+
+        .progress-step:last-child::after {
+            display: none;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: #DDD;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .progress-step.active .step-number {
+            background: #FFD600;
+            color: #003DA5;
+            box-shadow: 0 0 0 4px rgba(255, 214, 0, 0.2);
+        }
+
+        .progress-step.completed .step-number {
+            background: #4CAF50;
+        }
+
+        .step-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Form Content */
+        .form-content {
+            padding: 40px;
+        }
+
+        .verification-section {
+            margin-bottom: 40px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #003DA5;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #FFD600;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #FFFAF0;
+        }
+
+        .upload-area:hover {
+            background: #FFF9E6;
+            border-color: #FFC400;
+        }
+
+        .upload-area.active {
+            background: #E3F2FD;
+            border-color: #003DA5;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 16px;
+            font-weight: bold;
+            color: #003DA5;
+            margin-bottom: 5px;
+        }
+
+        .upload-hint {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        /* Preview */
+        .preview-box {
+            margin-top: 20px;
+            padding: 20px;
+            background: #F5F5F5;
+            border-radius: 10px;
+            display: none;
+            text-align: center;
+        }
+
+        .preview-box.show {
+            display: block;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .preview-info {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .remove-btn {
+            background: #D32F2F;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            background: #B71C1C;
+        }
+
+        /* Status */
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .status-pending {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .status-uploaded {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #FFD600 0%, #FFC400 100%);
+            color: #003DA5;
+            box-shadow: 0 4px 8px rgba(255, 214, 0, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 214, 0, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #E0E0E0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #D0D0D0;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(90deg, #003DA5 0%, #0052CC 100%);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-text {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+            }
+
+            .progress-bar {
+                padding: 20px;
+            }
+
+            .step-label {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <span>📱</span>
+                <div>
+                    <div style="font-size: 20px;">MTN + Circle Phones</div>
+                    <div class="tagline">iPhone Loan Program</div>
+                </div>
+            </div>
+            <div style="color: #003DA5; font-weight: bold;">Step 3 of 5: Verification</div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="form-card">
+            <!-- Form Header -->
+            <div class="form-header">
+                <h1>🔐 Identity Verification</h1>
+                <p>Upload your documents for verification</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar">
+                <div class="progress-step completed">
+                    <div class="step-number">✓</div>
+                    <div class="step-label">Browse</div>
+                </div>
+                <div class="progress-step completed">
+                    <div class="step-number">✓</div>
+                    <div class="step-label">Application</div>
+                </div>
+                <div class="progress-step active">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Verification</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Payment</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-number">5</div>
+                    <div class="step-label">Ticket</div>
+                </div>
+            </div>
+
+            <!-- Form Content -->
+            <div class="form-content">
+                <!-- Selfie Section -->
+                <div class="verification-section">
+                    <div class="section-title">
+                        <span>📸</span>
+                        <span>Face Verification (Selfie)</span>
+                    </div>
+                    <div class="section-description">
+                        Take a clear selfie photo of your face for identity verification. Make sure your face is clearly visible and well-lit.
+                    </div>
+                    
+                    <div class="upload-area" id="selfieUploadArea" onclick="document.getElementById('selfieInput').click()">
+                        <div class="upload-icon">📸</div>
+                        <div class="upload-text">Click to upload selfie</div>
+                        <div class="upload-hint">or drag and drop (JPG, PNG - Max 5MB)</div>
+                    </div>
+                    <input type="file" id="selfieInput" class="upload-input" accept="image/*" onchange="handleSelfieUpload(event)">
+                    
+                    <div class="preview-box" id="selfiePreview">
+                        <img id="selfieImage" class="preview-image" src="" alt="Selfie preview">
+                        <div class="preview-info" id="selfieInfo"></div>
+                        <button type="button" class="remove-btn" onclick="removeSelfie()">Remove & Re-upload</button>
+                        <div class="status-badge status-uploaded">✓ Uploaded</div>
+                    </div>
+                </div>
+
+                <!-- Ghana Card Section -->
+                <div class="verification-section">
+                    <div class="section-title">
+                        <span>🪪</span>
+                        <span>Ghana Card Verification</span>
+                    </div>
+                    <div class="section-description">
+                        Upload a clear photo of your Ghana national ID card. The card details must be clearly visible.
+                    </div>
+                    
+                    <div class="upload-area" id="cardUploadArea" onclick="document.getElementById('cardInput').click()">
+                        <div class="upload-icon">🪪</div>
+                        <div class="upload-text">Click to upload Ghana Card</div>
+                        <div class="upload-hint">or drag and drop (JPG, PNG - Max 5MB)</div>
+                    </div>
+                    <input type="file" id="cardInput" class="upload-input" accept="image/*" onchange="handleCardUpload(event)">
+                    
+                    <div class="preview-box" id="cardPreview">
+                        <img id="cardImage" class="preview-image" src="" alt="Ghana Card preview">
+                        <div class="preview-info" id="cardInfo"></div>
+                        <button type="button" class="remove-btn" onclick="removeCard()">Remove & Re-upload</button>
+                        <div class="status-badge status-uploaded">✓ Uploaded</div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='application.html'">Back</button>
+                    <button type="button" class="btn btn-primary" id="continueBtn" onclick="nextStep()" disabled>Continue to Payment →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <span>📱</span>
+                <span>MTN + Circle Phones</span>
+            </div>
+            <div class="footer-text">
+                <p>Get your dream phone today with instant loan approval</p>
+                <p style="margin-top: 10px; font-size: 12px;">© 2026 MTN Circle Phones. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let selfieUploaded = false;
+        let cardUploaded = false;
+
+        function handleSelfieUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File size must be less than 5MB');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('selfieImage').src = e.target.result;
+                    document.getElementById('selfieInfo').textContent = `File: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                    document.getElementById('selfiePreview').classList.add('show');
+                    selfieUploaded = true;
+                    checkAllUploaded();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleCardUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File size must be less than 5MB');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('cardImage').src = e.target.result;
+                    document.getElementById('cardInfo').textContent = `File: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                    document.getElementById('cardPreview').classList.add('show');
+                    cardUploaded = true;
+                    checkAllUploaded();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeSelfie() {
+            document.getElementById('selfieInput').value = '';
+            document.getElementById('selfiePreview').classList.remove('show');
+            selfieUploaded = false;
+            checkAllUploaded();
+        }
+
+        function removeCard() {
+            document.getElementById('cardInput').value = '';
+            document.getElementById('cardPreview').classList.remove('show');
+            cardUploaded = false;
+            checkAllUploaded();
+        }
+
+        function checkAllUploaded() {
+            const continueBtn = document.getElementById('continueBtn');
+            if (selfieUploaded && cardUploaded) {
+                continueBtn.disabled = false;
+            } else {
+                continueBtn.disabled = true;
+            }
+        }
+
+        function nextStep() {
+            if (selfieUploaded && cardUploaded) {
+                // Store verification data
+                const verificationData = {
+                    selfie: document.getElementById('selfieImage').src,
+                    card: document.getElementById('cardImage').src,
+                    uploadedAt: new Date().toISOString()
+                };
+                sessionStorage.setItem('verificationData', JSON.stringify(verificationData));
+                window.location.href = 'payment.html';
+            }
+        }
+
+        // Drag and drop for selfie
+        const selfieArea = document.getElementById('selfieUploadArea');
+        selfieArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            selfieArea.classList.add('active');
+        });
+        selfieArea.addEventListener('dragleave', () => {
+            selfieArea.classList.remove('active');
+        });
+        selfieArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            selfieArea.classList.remove('active');
+            document.getElementById('selfieInput').files = e.dataTransfer.files;
+            handleSelfieUpload({ target: { files: e.dataTransfer.files } });
+        });
+
+        // Drag and drop for card
+        const cardArea = document.getElementById('cardUploadArea');
+        cardArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            cardArea.classList.add('active');
+        });
+        cardArea.addEventListener('dragleave', () => {
+            cardArea.classList.remove('active');
+        });
+        cardArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            cardArea.classList.remove('active');
+            document.getElementById('cardInput').files = e.dataTransfer.files;
+            handleCardUpload({ target: { files: e.dataTransfer.files } });
+        });
+    </script>
+</body>
+</html>
